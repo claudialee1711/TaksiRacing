@@ -1059,23 +1059,27 @@ var RADIO_TRACKS = [
   // ---------- Jalan layang (flyover), fix4: four straight road-side arms, one beside each leg of the centre crossing ----------
   // Real side ramps: every arm runs along the outer edge of a central avenue, on its own extra lane outside the curb lane (the road is
   // widened there, sidewalk and curb cut back), so the normal lanes stay fully open: no ramp, divider or pillar in a regular lane.
-  // Arm k starts at origin FO[k] (centreline FOFF m beside the road centre, at the centre crossing's corner) and runs along unit FD[k];
-  // u = local distance along the arm (ramp feet at u = 0 and u = FLT, the deck FCL m up in between, over the next crossing), w = offset across
+  // Arm k starts at origin FO[k] (centreline FOFF m beside the road centre) and runs along unit FD[k];
+  // u = local distance along the arm (ramp feet at u = 0 and u = FLT, the deck level in between, centred on the CENTRE crossing so the
+  // flyover visibly does what it is for: cross the busy junction without stopping; the extra lane lands exactly on the stop line of the
+  // next crossing on both sides), w = offset across
   // it (w axis = (-d1, d0)). At grade the extra lane carries on FUX m past each foot to the crossing boxes at both ends.
-  var FHW = 6, FCL = 7.5, FOFF = RD / 2 + FHW, FUA = RD / 2 + 16, FUB = CELL * 2 - RD / 2 - 16, FU0 = 0, FLT = FUB - FUA, FUX = 16, FRAIL = 30, FLN = 3;
+  var FHW = 6, FCL = 8.2, FCLN = 6, FOFF = RD / 2 + FHW, FUA = RD / 2 + 16, FUB = CELL * 2 - RD / 2 - 16, FU0 = 0, FLT = FUB - FUA, FUX = 16, FRAIL = 30, FLN = 3;
+  // FCL = dek timur-barat, FCLN = dek utara-selatan (2,2 m lebih rendah): dua dek yang bersilangan di empat sudut persimpangan tengah
+  // tidak pernah bertabrakan (selisih 2,2 m > 0,9 pelat + 0,95 pagar pembatas).
   var FD = [[-1, 0], [0, -1], [1, 0], [0, 1]]; // west (south side), south (east side), east (north side), north (west side): a pinwheel, no two arms meet
-  var FO = [[-FUA, -FOFF], [FOFF, -FUA], [FUA, FOFF], [-FOFF, FUA]];
+  var FO = [[FLT / 2, -FOFF], [FOFF, FLT / 2], [-FLT / 2, FOFF], [-FOFF, -FLT / 2]]; // plateau di u = FLT/2 = pusat persimpangan
   function flyUW(k, x, z) { var d = FD[k], dx = x - FO[k][0], dz = z - FO[k][1]; return [dx * d[0] + dz * d[1], -dx * d[1] + dz * d[0]]; }
   function flyXZ(k, u, w) { var d = FD[k]; return [FO[k][0] + u * d[0] - w * d[1], FO[k][1] + u * d[1] + w * d[0]]; }
-  function flyC(u) { if (u <= 0 || u >= FLT) return 0; return FCL * Math.min(ss(u / 95), ss((FLT - u) / 95)); }
-  function flyY(k, u) { var p = flyXZ(k, u, 0); return groundH0(p[0], p[1]) + flyC(u); }
+  function flyC(u, k) { if (u <= 0 || u >= FLT) return 0; return (k === 1 || k === 3 ? FCLN : FCL) * Math.min(ss(u / 95), ss((FLT - u) / 95)); }
+  function flyY(k, u) { var p = flyXZ(k, u, 0); return groundH0(p[0], p[1]) + flyC(u, k); }
   function flyYw(k, u, w) { // deck surface at (u, w): level across its width up high, melting into the ground at the ramp feet (no step at the edges)
-    var c = flyC(u), b = ss(c / 3), p = flyXZ(k, u, w), a = flyXZ(k, u, 0);
+    var c = flyC(u, k), b = ss(c / 3), p = flyXZ(k, u, w), a = flyXZ(k, u, 0);
     return groundH0(p[0], p[1]) * (1 - b) + groundH0(a[0], a[1]) * b + c;
   }
   function flyRamp(x, z, m) { // on (or within m of) the extra lane / a ramp where the deck is still low (< 2.6 m): kept clear of sidewalks, curbs, trees, poles and people
     for (var k = 0; k < 4; k++) { var q = flyUW(k, x, z);
-      if (Math.abs(q[1]) < FHW + m && q[0] > -FUX - m && q[0] < FLT + FUX + m && flyC(q[0]) < 2.6) return true; }
+      if (Math.abs(q[1]) < FHW + m && q[0] > -FUX - m && q[0] < FLT + FUX + m && flyC(q[0], k) < 2.6) return true; }
     return false;
   }
   function flyNear(x, z, m) { for (var k = 0; k < 4; k++) { var q = flyUW(k, x, z); if (Math.abs(q[1]) < FHW + m && q[0] > -FUX - m && q[0] < FLT + FUX + m) return true; } return false; }
@@ -1084,14 +1088,14 @@ var RADIO_TRACKS = [
     for (var k = 0; k < 4; k++) {
       var q = flyUW(k, x, z);
       if (Math.abs(q[1]) > FHW || q[0] > FLT + FUX || q[0] < -FUX) continue;
-      var y = flyYw(k, q[0], q[1]); if (flyC(q[0]) < 0.3) y = Math.max(y, groundH(x, z));
+      var y = flyYw(k, q[0], q[1]); if (flyC(q[0], k) < 0.3) y = Math.max(y, groundH(x, z));
       if (Math.abs(y - alt) < 1.3 && (!best || Math.abs(y - alt) < Math.abs(best.y - alt))) best = { k: k, y: y, u: q[0], w: q[1] };
     }
     return best;
   }
   function surfY(x, z, alt) { // what the taxi drives on at (x, z) when it is at height alt: a deck in reach, else the ground
     var s = flySurf(x, z, alt), g = groundH(x, z);
-    if (s && (flyC(s.u) < 2.2 || Math.abs(g - alt) >= 1.3 || Math.abs(s.y - alt) <= Math.abs(g - alt))) return s.y; // a low ramp is solid: nothing drives under it
+    if (s && (flyC(s.u, s.k) < 2.2 || Math.abs(g - alt) >= 1.3 || Math.abs(s.y - alt) <= Math.abs(g - alt))) return s.y; // a low ramp is solid: nothing drives under it
     return g;
   }
   function flyBlock(x0, z0, x1, z1, alt, deckK) { // parapets keep the taxi on a deck; the deck's side faces stop it from below
@@ -4396,7 +4400,7 @@ var RADIO_TRACKS = [
   var FLYT = [], FZC = RD / 2 + 9;
   function flyPlace(v, h) {
     var w = -v.fs * (FLN + (v.yo || 0)), p = flyXZ(v.fk, v.fu, w), y = flyYw(v.fk, v.fu, w);
-    if (flyC(v.fu) < 0.3) y = Math.max(y, isRoad(p[0], p[1]) ? groundH0(p[0], p[1]) : groundH(p[0], p[1]));
+    if (flyC(v.fu, v.fk) < 0.3) y = Math.max(y, isRoad(p[0], p[1]) ? groundH0(p[0], p[1]) : groundH(p[0], p[1]));
     h = h || 0; v.ofx = v.ofx || 0; v.ofz = v.ofz || 0;
     if (v.kvx || v.kvz) { v.ofx += v.kvx * h; v.ofz += v.kvz * h; var kd = Math.exp(-h * 3.5); v.kvx *= kd; v.kvz *= kd; if (Math.abs(v.kvx) + Math.abs(v.kvz) < 0.03) v.kvx = v.kvz = 0; }
     var odk = Math.exp(-h * 3); v.ofx *= odk; v.ofz *= odk;
@@ -4405,7 +4409,7 @@ var RADIO_TRACKS = [
     if (v.mesh.rotation.order !== "YXZ") v.mesh.rotation.order = "YXZ";
     var dh = want - v.mesh.rotation.y; dh = Math.atan2(Math.sin(dh), Math.cos(dh));
     v.mesh.rotation.y = h ? v.mesh.rotation.y + dh * Math.min(1, h * 4) : want;
-    v.mesh.rotation.x = flyC(v.fu) < 0.3 ? 0 : -Math.atan2(y2 - y1, 4); v.mesh.rotation.z = 0;
+    v.mesh.rotation.x = flyC(v.fu, v.fk) < 0.3 ? 0 : -Math.atan2(y2 - y1, 4); v.mesh.rotation.z = 0;
     v.mesh.position.set(v.px, y, v.pz);
   }
   ["sedan", "motor", "angkot", "sedan", "bus", "sedan", "truck", "motor", "sedan", "angkot"].forEach(function (t, i) {
@@ -5332,7 +5336,7 @@ var RADIO_TRACKS = [
       function quad(B, a, b, c, d, uvs) { var n = B.p.length / 3; [a, b, c, d].forEach(function (v) { B.p.push(v[0], v[1], v[2]); }); if (uvs) uvs.forEach(function (q) { B.uv.push(q[0], q[1]); }); B.ix.push(n, n + 1, n + 2, n, n + 2, n + 3); }
       for (var k = 0; k < 4; k++) [1].forEach(function (sg) {
         var us = []; for (var u = -FUX; u < FLT + FUX; u += 4) us.push(u); us.push(FLT + FUX); // the extra lane at grade, both ramps and the deck
-        function P(u, w, dy) { var q = flyXZ(k, u, w), y = flyYw(k, u, w); if (flyC(u) < 0.3) y = Math.max(y, groundH(q[0], q[1])); return [q[0], y + 0.06 + dy, q[1]]; }
+        function P(u, w, dy) { var q = flyXZ(k, u, w), y = flyYw(k, u, w); if (flyC(u, k) < 0.3) y = Math.max(y, groundH(q[0], q[1])); return [q[0], y + 0.06 + dy, q[1]]; }
         for (var i = 0; i < us.length - 1; i++) {
           var a = us[i], b = us[i + 1], s = sg;
           quad(T, P(a, -FHW, 0), P(a, FHW, 0), P(b, FHW, 0), P(b, -FHW, 0), [[0, s * a / 16], [1, s * a / 16], [1, s * b / 16], [0, s * b / 16]]);
@@ -5352,7 +5356,7 @@ var RADIO_TRACKS = [
       var pil = [];
       for (k = 0; k < 4; k++) [1].forEach(function (sg) {
         for (var u = 45; u < FLT - 40; u += 30) {
-          if (flyC(u) < 2.6) continue;
+          if (flyC(u, k) < 2.6) continue;
           for (var tr = 0, ok = false; tr < 7 && !ok; tr++) {
             var uu = u + [0, 6, -6, 12, -12, 18, -18][tr], q = flyXZ(k, uu, 0), clear = true;
             for (var a2 = -1; a2 <= 1 && clear; a2++) for (var b2 = -1; b2 <= 1 && clear; b2++) { var px = q[0] + a2 * 2.2, pz = q[1] + b2 * 2.2; if (isRoad(px, pz) || isWalk(px, pz) || gangAt(px, pz) || rbNear(px, pz, RBP + 2) || inPlot(px, pz, 2) || inStad(px, pz, 3)) clear = false; }
@@ -5371,7 +5375,7 @@ var RADIO_TRACKS = [
       // small poles (traffic-light / sign posts) standing where a ramp comes down: no longer solid, the ramp is driven over them
       for (var bi = boxes.length - 1; bi >= 0; bi--) {
         var bb = boxes[bi]; if (bb.x2 - bb.x1 > 3 || bb.z2 - bb.z1 > 3) continue;
-        for (var bk = 0; bk < 4; bk++) { var bq = flyUW(bk, (bb.x1 + bb.x2) / 2, (bb.z1 + bb.z2) / 2); if (Math.abs(bq[1]) < FHW + 0.6 && bq[0] > -FUX - 1 && bq[0] < FLT + FUX + 1 && flyC(bq[0]) < 4.5) { boxes.splice(bi, 1); break; } }
+        for (var bk = 0; bk < 4; bk++) { var bq = flyUW(bk, (bb.x1 + bb.x2) / 2, (bb.z1 + bb.z2) / 2); if (Math.abs(bq[1]) < FHW + 0.6 && bq[0] > -FUX - 1 && bq[0] < FLT + FUX + 1 && flyC(bq[0], bk) < 4.5) { boxes.splice(bi, 1); break; } }
       }
       // green "JALAN LAYANG" boards at the eight ramp feet
       for (k = 0; k < 4; k++) [1].forEach(function (sg) { [9, FLT - 9].forEach(function (u) {
