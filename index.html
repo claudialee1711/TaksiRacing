@@ -103,7 +103,7 @@
       .x-limit small { font-size: 7px; font-weight: var(--weight-bold); letter-spacing: .04em; color: #444; }
       .x-limit.is-over { animation: x-blink .5s steps(2, jump-none) infinite; box-shadow: 0 0 12px 3px rgba(255, 40, 30, .8); }
       @media (max-width: 720px) { .x-limit { right: 134px; bottom: 8px; transform: scale(.8); transform-origin: bottom right; } }
-      .x-ord { position: absolute; top: 58px; right: 12px; width: 280px; max-height: calc(100vh - 250px); overflow-y: auto; pointer-events: auto; padding: 8px 10px 10px; border-left: 3px solid var(--hud-y); }
+      .x-ord { position: absolute; top: 58px; right: 12px; width: 280px; max-height: max(220px, calc(100vh - 560px)); overflow-y: auto; pointer-events: auto; padding: 8px 10px 10px; border-left: 3px solid var(--hud-y); }
       .x-ord-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
       .x-ord-h b { font: var(--type-label); font-weight: var(--weight-bold); color: var(--hud-y); }
       .x-ord-h small { font: var(--type-caption); color: rgba(255, 255, 255, .7); margin-left: auto; }
@@ -230,7 +230,7 @@
       .x-avas { grid-template-columns: repeat(4, 1fr); }
       .x-ava.is-on { outline: 3px solid #ffc400; background: #fff6d6; }
       .x-shop li[data-pv] { cursor: pointer; border-radius: var(--r-s); }
-      .x-shop li[data-pv]:hover, .x-shop li.is-pv { background: #fff6d6; }
+      .x-shop li[data-pv]:hover, .x-shop li.is-pv { background: rgba(255, 196, 0, .16); box-shadow: inset 0 0 0 1px rgba(255, 196, 0, .55); }
       .x-pvnote { font: var(--type-caption); font-weight: var(--weight-bold); color: #8a5a00; background: #fff3c4; border-radius: var(--r-s); padding: 6px 10px; margin: 0 0 10px; }
       @media (max-width: 720px) { .x-mm h1.x-title { font-size: 34px; } .x-mm { padding: 18px 18px 14px; } .x-sky { bottom: 30px; } .x-ticker { display: none; } }
       @media (prefers-reduced-motion: reduce) { .x-sky, .x-mtaxi, .x-road::after, .x-check, .x-ticker span, .x-mm h1.x-title b, .x-mbg .x-sun { animation: none; } }
@@ -297,7 +297,7 @@
       #hud .x-mini { top: calc(var(--st) + var(--m)); width: var(--mini); height: var(--mini); border-radius: calc(18px * var(--s)); }
       #hud .x-status { top: calc(var(--st) + var(--m) + var(--mini) + 8px); transform: translateX(-50%) scale(max(var(--s), .82)); transform-origin: top center; max-width: calc(96vw / max(var(--s), .82)); }
       .x-arrow { top: calc(env(safe-area-inset-top, 0px) + 10px + 150px * var(--s, 1) + 44px); transform: translateX(-50%) scale(max(var(--s, 1), .78)); transform-origin: top center; }
-      #hud .x-ord { top: calc(var(--st) + var(--m) + 50px * var(--s)); right: calc(var(--sr) + var(--m)); transform: scale(var(--s)); transform-origin: top right; max-height: calc((100vh - var(--st) - var(--m) - 50px * var(--s) - 200px * var(--s) - 16px) / var(--s)); }
+      #hud .x-ord { top: calc(var(--st) + var(--m) + 50px * var(--s)); right: calc(var(--sr) + var(--m)); transform: scale(var(--s)); transform-origin: top right; max-height: max(160px, calc((100vh - var(--st) - var(--m) - 50px * var(--s) - 470px * var(--s) - 16px) / var(--s))); }
       #hud .x-speedo { bottom: calc(var(--sb) + 4px); transform: translateX(-50%) scale(var(--s)); transform-origin: bottom center; }
       #hud .x-horn { left: calc(var(--sl) + var(--m)); bottom: calc(var(--sb) + var(--m)); transform: scale(var(--s)); transform-origin: bottom left; }
       #hud .x-nitro { left: calc(var(--sl) + var(--m) + 70px * var(--s)); bottom: calc(var(--sb) + var(--m)); transform: scale(var(--s)); transform-origin: bottom left; }
@@ -739,7 +739,10 @@ var RADIO_TRACKS = [
     { id: "classic", n: "Sedan Klasik 80-an", t: "Klasik", p: 350000, st: "classic", len: 5.0, wid: 1.72, h: 1.42 },
     { id: "minibus", n: "Minibus Elf", t: "Minibus", p: 450000, st: "minibus", len: 5.5, wid: 1.85, h: 2.1 },
     { id: "premium", n: "Sedan Premium", t: "Premium", p: 600000, st: "premium", len: 5.3, wid: 1.82, h: 1.45 },
-    { id: "ev", n: "Taksi Listrik", t: "Listrik", p: 750000, st: "ev", len: 4.7, wid: 1.8, h: 1.52 }
+    { id: "ev", n: "Taksi Listrik", t: "Listrik", p: 750000, st: "ev", len: 4.7, wid: 1.8, h: 1.52 },
+    { id: "bmw", n: "BMW M3 Taxi", t: "Sport Sedan", p: 900000, st: "sedan", len: 4.75, wid: 1.86, h: 1.38 },
+    { id: "nascar", n: "NASCAR Stock Car", t: "Stock Car", p: 1500000, st: "nascar", len: 4.95, wid: 1.98, h: 1.32 },
+    { id: "lambo", n: "Lamborghini Taxi", t: "Supercar", p: 2500000, st: "supercar", len: 4.6, wid: 2.0, h: 1.18 }
   ];
   var TIRES = [ // n: type name, p: price, g: grip, r: wheel radius (m); rim: k design, s spoke count, c colour, R rim size (px of 128)
     { n: "Standar Pabrik", p: 0, g: 1.0, r: 0.38, rim: { k: "spoke", s: 5, c: "#c9cdd2", R: 86 } },
@@ -2095,7 +2098,9 @@ var RADIO_TRACKS = [
       ev: [[0.3, 0], [0.08, 1], [-0.3, 1], [-0.43, 0]],
       hatch: [[0.17, 0], [0.0, 1], [-0.36, 1], [-L / len + 0.06, 0]],
       mpv: [[0.24, 0], [0.07, 1], [-0.42, 1], [-L / len + 0.03, 0]],
-      pickup: [[0.17, 0], [0.02, 1], [-0.13, 1], [-0.16, 0]]
+      pickup: [[0.17, 0], [0.02, 1], [-0.13, 1], [-0.16, 0]],
+      supercar: [[0.14, 0], [-0.02, 1], [-0.26, 1], [-0.4, 0]],
+      nascar: [[0.17, 0], [-0.03, 1], [-0.21, 1], [-0.33, 0]]
     }[style] || [[0.18, 0], [0.02, 1], [-0.28, 1], [-0.40, 0]];
     function cp(k) { return new THREE.Vector2(len * CP[k][0], CP[k][1] ? h : yb); }
     var A = cp(0), B = cp(1), C = cp(2), D = cp(3), CB = 0.04, BULGE = style === "classic" || style === "van" || style === "minibus" ? 0.015 : 0.04;
@@ -2192,6 +2197,10 @@ var RADIO_TRACKS = [
       bx(0.55, 0.4, 0.5, -wid * 0.18, yb + 0.21, bzc - 0.2, cgM); bx(0.5, 0.3, 0.45, wid * 0.2, yb + 0.16, bzc + 0.35, CARM.cargo[0]);
     }
     if (style === "mpv") [1, -1].forEach(function (sd) { bx(0.04, 0.04, len * 0.42, sd * cw * 0.4, h + 0.06, (B.x + C.x) / 2, DET.trim); }); // roof rails
+    if (style === "nascar") { // sayap belakang: blade di atas dua end plate - ciri mobil stok NASCAR
+      bx(wid * 0.82, 0.06, 0.44, 0, h + 0.26, -L + 0.34, bodyM);
+      [1, -1].forEach(function (sd) { bx(0.05, 0.32, 0.52, sd * wid * 0.4, h + 0.13, -L + 0.34, DET.trim); });
+    }
     // 5. body detail, merged: panel lines, handles, mirrors on stubs, grille slats, skirts, chrome window line
     var K = detailKit(), S = DET.seam, T = 0.012, ylo = y0 + 0.1, ytop = yb + 0.012;    // door lines: just above the skirt up to the beltline
     var DZ = style === "pickup" ? [zf, zb] : [zf, zb, zr];
@@ -2786,11 +2795,11 @@ var RADIO_TRACKS = [
     waiter.rotation.y = Math.atan2(-o.pick.nx, -o.pick.nz); // faces the road
     drawTag(st.pt.n);
     setStatus("Orderan diambil! Jemput " + st.pt.n + " di " + placeName(o.pick) + " (lingkaran hijau)");
-    navReset(); ordVer++; return true;
+    navReset(); ordVer++; ordMin(true); return true; // lipat daftarnya biar nggak nutupin jalan pas nyetir
   }
   function ordCancel() { if (!ordAct || st.phase !== "pick" || st.board) return; ordIdle(); ordVer++; setStatus("Orderan dibatalin. Pilih orderan lain."); }
-  function ordDone() { ORD = ORD.filter(function (o) { return o !== ordAct; }); ordIdle(); ordFill(); ordVer++; }
-  function newPickup() { ordIdle(); ORD = []; ordFill(); ordVer++; setStatus("Pilih orderan di panel kanan (tekan 1–4)"); }
+  function ordDone() { ORD = ORD.filter(function (o) { return o !== ordAct; }); ordIdle(); ordFill(); ordVer++; ordMin(false); }
+  function newPickup() { ordIdle(); ORD = []; ordFill(); ordVer++; ordMin(false); setStatus("Pilih orderan di panel kanan (tekan 1–4)"); }
   function ordRender() {
     if (ordShown === ordVer) return; ordShown = ordVer;
     var h = "";
@@ -2810,7 +2819,8 @@ var RADIO_TRACKS = [
     if (b.dataset.oi != null) ordTake(+b.dataset.oi); else if (b.dataset.oc) ordCancel();
     b.blur();
   });
-  function ordToggle() { var bx = $("ordBox"), m = !bx.classList.contains("is-min"); bx.classList.toggle("is-min", m); $("ordTog").textContent = m ? "+" : "–"; }
+  function ordMin(m) { var bx = $("ordBox"); bx.classList.toggle("is-min", m); $("ordTog").textContent = m ? "+" : "–"; }
+  function ordToggle() { ordMin(!$("ordBox").classList.contains("is-min")); }
   $("ordTog").addEventListener("click", function () { ordToggle(); this.blur(); });
   // ---------- Navigation: a route along the road grid to the current ring, recomputed twice a second ----------
   var nav = { t: 0, pts: null, len: 0 };
@@ -3622,6 +3632,13 @@ var RADIO_TRACKS = [
     }
     return true;
   }
+  function laneTaxi(ax, r, dir, lane, s, back, ahead) { // taksi ada di jalur sasaran? jangan nyelonong potong di depannya
+    if (!st || !st.running || taxiUp()) return false;
+    var tl = ax === "z" ? (st.x - roadC(r)) * dir : (roadC(r) - st.z) * dir;
+    if (Math.abs(tl - LN[lane]) > THW + 1.8) return false;
+    var d = ((ax === "z" ? st.z : st.x) - s) * dir;
+    return d > -(back + THL) && d < ahead + THL;
+  }
   for (var q = 0, tries = 0; q < 130 && tries < 12000; tries++) { // a pool of ~130 vehicles (fewer, longer roads than before), spawned district by district (q % 5) so every quarter gets its share
     var vt = TYPES[q % TYPES.length], vax = Math.random() < 0.5 ? "x" : "z", vb = randBlk(q % 5), vdir = Math.random() < 0.5 ? 1 : -1, vlane = prefLane(vt), vo = LN[vlane];
     var vr = (vax === "z" ? vb[0] : vb[1]) + (Math.random() < 0.5 ? 0 : 1), vs = -HALF + RD + (vax === "z" ? vb[1] : vb[0]) * CELL + Math.random() * BLK;
@@ -3887,9 +3904,17 @@ var RADIO_TRACKS = [
     if (d >= min) return;
     var nx = d > 0.01 ? cx / d : -Math.sin(st.h), nz = d > 0.01 ? cz / d : -Math.cos(st.h);
     var tx = st.x + nx * (min - d + 0.05), tz = st.z + nz * (min - d + 0.05); // just out of contact: no rebound
-    if (!hits(tx, tz) && !medHit(tx, tz, st.h)) { st.x = tx; st.z = tz; }
+    var free = false;
+    for (var pi = 1; pi <= 3 && !free; pi++) { // dorong makin jauh kalau titik pertama masih mentok - biar taksi nggak nyangkut di dalam bodi
+      var qx = st.x + nx * (min - d + 0.05) * pi, qz = st.z + nz * (min - d + 0.05) * pi;
+      if (!hits(qx, qz) && !medHit(qx, qz, st.h)) { st.x = qx; st.z = qz; free = true; }
+    }
     var ivx = st.vx || 0, ivz = st.vz || 0, imp = Math.hypot(ivx, ivz), kmh = Math.abs(st.v) * 3.6;
-    st.v = 0; st.vx = st.vz = 0; // the taxi stops dead
+    var kn = -(ivx * nx + ivz * nz); // komponen kecepatan yang mengarah ke bodi kendaraan
+    if (kn > 0) { st.vx += kn * nx; st.vz += kn * nz; } // geser sepanjang permukaan, jangan ditahan mati
+    var nose = Math.abs(nx * Math.sin(st.h) + nz * Math.cos(st.h));
+    if (nose > 0.6 && kn > 1.2) { st.v = 0; st.vx = st.vz = 0; } // beneran nabrak depan: berhenti
+    else st.v *= Math.max(0.5, 1 - Math.min(0.5, kn / 10)); // gesekan biasa: pelan, tapi tetap jalan
     if (v.cd > 0) return;
     v.cd = 1;
     polCrash(v.pol ? { x: v.px, z: v.pz, nx: 0, nz: 0, v: v } : null, kmh); // crash near (or into) the police: ditilang
@@ -4098,6 +4123,7 @@ var RADIO_TRACKS = [
   }
   function turnFree(v, tp) { var nax = v.ax === "z" ? "x" : "z"; return laneFree(nax, tp.k, tp.nd, tp.el, roadC(v.r) + tp.nd * TURNE, v.hl + 5, v.hl + 10, v); }
   function drive(v, h) {
+    var esc = (v.stuckT || 0) > 6, lightStop = false; // macet total di lampu hijau > 6 dtk: putus antrean sopan yang saling menunggu
     var safe = 3 + v.cur * 0.8, lim = v.cruise, gap = 1e9, u = v.lead;
     if (u) { gap = (u.s - v.s) * v.dir - u.hl - v.hl; if (gap < safe + 15) lim = Math.min(lim, u.cur + (gap - safe) * 0.6); }
     if (st && st.running && !taxiUp()) { // the taxi counts as the vehicle ahead when it sits in this lane
@@ -4115,7 +4141,7 @@ var RADIO_TRACKS = [
         var ds = (roadC(tk) - v.s) * v.dir - v.hl - STOPD, tlKey = tli + "_" + tlj + v.ax;
         // once it has decided to stop for this light (or has crawled up slowly), it holds behind the line even after a small overshoot
         var hold = ds > -1.5 && (v.tlK === tlKey || v.cur < 3);
-        if (ds < 60 && ((ds > -0.3 && ds >= v.cur * v.cur / 14 - 1) || hold)) { v.tlK = tlKey; stopCap = Math.max(0, ds); lim = Math.min(lim, Math.sqrt(8 * Math.max(0, ds - 0.2))); }
+        if (ds < 60 && ((ds > -0.3 && ds >= v.cur * v.cur / 14 - 1) || hold)) { v.tlK = tlKey; stopCap = Math.max(0, ds); lim = Math.min(lim, Math.sqrt(8 * Math.max(0, ds - 0.2))); lightStop = true; }
       }
     }
     // the crossing just ahead (lit or not): slow down through an unlit T-junction, and wait at its edge while someone else is using it
@@ -4126,10 +4152,10 @@ var RADIO_TRACKS = [
         if (!TLV[ni_][nj_]) lim = Math.min(lim, v.cruise * 0.6);
         fr = an - v.hl - RD / 2; // front bumper to the crossing box
         if (TLV[ni_][nj_] && sig(ni_, nj_, v.ax) > 0 && !(v.tp && v.tp.k === kn) && fr > 0.3 && fr < 9 && fr >= v.cur * v.cur / 14) { // rolled past the stop line slowly on yellow/red: wait at the box edge instead of crawling in
-          stopCap = Math.min(stopCap, Math.max(0, fr - 0.3)); lim = Math.min(lim, Math.sqrt(6 * Math.max(0, fr - 0.5)));
+          stopCap = Math.min(stopCap, Math.max(0, fr - 0.3)); lim = Math.min(lim, Math.sqrt(6 * Math.max(0, fr - 0.5))); lightStop = true;
         }
-        if (fr > 0.3 && fr < 16 && jBusy(ni_, nj_, v)) { var dyw = Math.max(0, fr - 1); stopCap = Math.min(stopCap, dyw); lim = Math.min(lim, Math.sqrt(6 * dyw)); }
-        else if (fr > 0.3 && fr < 4) claimK = jKey(ni_, nj_); // about to enter a free crossing: claim it below (first come, first served)
+        if (!esc && fr > 0.3 && fr < 16 && jBusy(ni_, nj_, v)) { var dyw = Math.max(0, fr - 1); stopCap = Math.min(stopCap, dyw); lim = Math.min(lim, Math.sqrt(6 * dyw)); }
+        else if (!esc && fr > 0.3 && fr < 4) claimK = jKey(ni_, nj_); // about to enter a free crossing: claim it below (first come, first served)
       }
     }
     var ak = v.ak; // angkot curb stop: brake smoothly to the stop point, then hold until it rejoins
@@ -4162,7 +4188,7 @@ var RADIO_TRACKS = [
         if (!isRB(ti, tj) && !(outer && (nk === 0 || nk === N)) && (toEdge || Math.random() < 0.35)) {
           var nd = outer ? (v.r === 0 ? 1 : -1) : Math.random() < 0.5 ? 1 : -1, isL = nd === leftNd(v), want = isL ? 1 : 0;
           if (!outer && v.lane !== want) { nd = -nd; isL = !isL; want = 1 - want; } // turn the way the current lane allows
-          if (v.lane !== want && dnk > TURNE + 18 && laneFree(v.ax, v.r, v.dir, want, v.s, v.hl + 8, v.hl + 12, v)) { v.lane = want; v.lcC = 6; }
+          if (v.lane !== want && dnk > TURNE + 18 && laneFree(v.ax, v.r, v.dir, want, v.s, v.hl + 8, v.hl + 12, v) && !laneTaxi(v.ax, v.r, v.dir, want, v.s, v.hl + 8, v.hl + 22)) { v.lane = want; v.lcC = 6; }
           if (v.lane === want || toEdge) v.tp = { k: nk, nd: nd, el: want, right: !isL, force: toEdge };
         }
       }
@@ -4172,14 +4198,14 @@ var RADIO_TRACKS = [
     else if (v.tp) {
       var dtp = (roadC(v.tp.k) - v.s) * v.dir - TURNE;
       lim = Math.min(lim, Math.sqrt(TS * TS + 5 * Math.max(0, dtp)));
-      if (v.tp.hold && turnFree(v, v.tp)) v.tp.hold = false;
-      if (dtp < 14 && (v.tp.hold || (v.tp.right && oncoming(v, v.tp.k)))) { // wait at the turn: exit lane full, or oncoming traffic
+      if (v.tp.hold && (esc || turnFree(v, v.tp))) v.tp.hold = false;
+      if (dtp < 14 && !esc && (v.tp.hold || (v.tp.right && oncoming(v, v.tp.k)))) { // wait at the turn: exit lane full, or oncoming traffic
         stopCap = Math.min(stopCap, Math.max(0, dtp)); lim = Math.min(lim, Math.sqrt(6 * Math.max(0, dtp)));
       }
     }
     // a planned turn starts its curve exactly TURNE before the centre: anything that holds or slows the vehicle (busy crossing, something in
     // the path, the box edge) must not let it creep past that point uncurved, or the curve would start behind its own control point (half-spin)
-    if (!v.rb && v.tp && stopCap < 1e8) { var dT = (roadC(v.tp.k) - v.s) * v.dir - TURNE; if (dT > -0.5 && dT < 40) { stopCap = Math.min(stopCap, Math.max(0, dT)); lim = Math.min(lim, Math.sqrt(6 * Math.max(0, dT))); } }
+    if (!v.rb && !esc && v.tp && stopCap < 1e8) { var dT = (roadC(v.tp.k) - v.s) * v.dir - TURNE; if (dT > -0.5 && dT < 40) { stopCap = Math.min(stopCap, Math.max(0, dT)); lim = Math.min(lim, Math.sqrt(6 * Math.max(0, dT))); } }
     if (v.gA > 0) v.gA -= h;
     lim = Math.max(0, lim);
     if (claimK && stopCap > fr - 0.5 && lim > 0.5) (jOcc[claimK] || (jOcc[claimK] = [])).push(v); // later vehicles this frame now see it as inside
@@ -4189,8 +4215,8 @@ var RADIO_TRACKS = [
     var jd = Math.abs(v.s - roadC(0) - Math.round((v.s - roadC(0)) / CELL) * CELL), nkd = nk >= 0 && nk <= N ? (roadC(nk) - v.s) * v.dir : 1e9;
     if (v.lcC <= 0 && !v.rb && !v.tp && !(ak && ak.ph) && jd > RD / 2 + 14 && nkd > 50) {
       var o = 1 - v.lane;
-      if (v.lcT > 2.5 && !slowType(v.type) && laneFree(v.ax, v.r, v.dir, o, v.s, v.hl + 10, v.hl + 15, v)) { v.lane = o; v.lcT = 0; v.lcC = 8; }
-      else if (v.lane !== v.pref && gap > 35 && laneFree(v.ax, v.r, v.dir, v.pref, v.s, v.hl + 10, v.hl + 16, v)) { v.lane = v.pref; v.lcC = 8; }
+      if (v.lcT > 4 && !slowType(v.type) && laneFree(v.ax, v.r, v.dir, o, v.s, v.hl + 10, v.hl + 15, v) && !laneTaxi(v.ax, v.r, v.dir, o, v.s, v.hl + 12, v.hl + 26)) { v.lane = o; v.lcT = 0; v.lcC = 14; }
+      else if (v.lane !== v.pref && gap > 35 && laneFree(v.ax, v.r, v.dir, v.pref, v.s, v.hl + 10, v.hl + 16, v) && !laneTaxi(v.ax, v.r, v.dir, v.pref, v.s, v.hl + 12, v.hl + 26)) { v.lane = v.pref; v.lcC = 14; }
     }
     // lateral moves (lane change, an angkot hugging the curb): sideways speed eases in and out (max 2 m/s), and the body yaws into it (moveMesh)
     var loT = LN[v.lane] + (ak && (ak.ph === 1 || ak.ph === 2) ? 0.9 : 0) + (v.yieldT > 0 && !v.rb ? (v.lane === 1 ? 1.5 : 1.2) : 0), lvD = Math.max(-2, Math.min(2, (loT - v.lo) * 1.3));
@@ -4223,6 +4249,7 @@ var RADIO_TRACKS = [
         if (rda <= Math.sqrt(RBE * RBE - Math.min(9, v.lo) * Math.min(9, v.lo)) && rda > -RD / 2) rbEnter(v, rbi, rbj, rk);
       }
     }
+    if (step < 0.02 && !lightStop) v.stuckT = (v.stuckT || 0) + h; else v.stuckT = 0; // berhenti bukan karena lampu merah
     v.idx = cellIdx(v.s);
     return false;
   }
@@ -5110,9 +5137,9 @@ var RADIO_TRACKS = [
       var rows = [[], [], []];
       cells.forEach(function (c, i) {
         var stage = c[4] < 0.16 ? -1 : c[4] < 0.55 ? 0 : c[4] < 0.85 ? 1 : 2; // -1: just flooded and ploughed, nothing planted yet
-        o3.position.set(c[0], c[1] + 0.03, c[2]); o3.rotation.set(0, 0, 0); o3.scale.set(c[3] - 0.7, 1, c[3] - 0.7); o3.updateMatrix(); wat.setMatrixAt(i, o3.matrix);
+        o3.position.set(c[0], c[1] - 0.04, c[2]); o3.rotation.set(0, 0, 0); o3.scale.set(c[3] - 0.7, 1, c[3] - 0.7); o3.updateMatrix(); wat.setMatrixAt(i, o3.matrix);
         wat.setColorAt(i, col.setHex(stage < 0 ? 0x8a8466 : stage === 2 ? 0x7d8a76 : 0x6c8c8a)); // fresh mud water is browner
-        var hgt = c[1] + 0.3 - (c[5] - 0.4);
+        var hgt = c[1] - 0.01 - (c[5] - 0.4); // pucuk pematang ~2 cm di bawah trotoar, bukan 25 cm di atasnya
         [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(function (q, k) {
           o3.position.set(c[0] + q[0] * c[3] / 2, c[5] - 0.4 + hgt / 2, c[2] + q[1] * c[3] / 2);
           o3.scale.set(q[0] ? 0.75 : c[3] + 0.75, hgt, q[0] ? c[3] + 0.75 : 0.75); o3.updateMatrix(); dk.setMatrixAt(i * 4 + k, o3.matrix);
@@ -5122,7 +5149,7 @@ var RADIO_TRACKS = [
         var along = ((c[0] + c[2]) / sz | 0) % 2 ? 0 : PI / 2, S = STG[stage], gap = stage ? 0.75 : 0.9;
         for (var o = -c[3] / 2 + 1.1; o <= c[3] / 2 - 1.1; o += gap) {
           var x = along ? c[0] : c[0] + o, z = along ? c[2] + o : c[2];
-          rows[stage].push([x, c[1] + 0.02, z, along, S.h * (0.9 + Math.random() * 0.2)]);
+          rows[stage].push([x, c[1] - 0.05, z, along, S.h * (0.9 + Math.random() * 0.2)]);
         }
       });
       wat.receiveShadow = dk.receiveShadow = dg.receiveShadow = true; dk.castShadow = true; scene.add(wat, dk, dg);
@@ -5142,7 +5169,7 @@ var RADIO_TRACKS = [
         scene.add(pf);
       }
       for (var sc2 = 0; sc2 < 5 && cells.length; sc2++) { // orang-orangan sawah: a cross of sticks, a shirt and a caping
-        var scl = cells[(Math.random() * cells.length) | 0], SG = new THREE.Group(); SG.position.set(scl[0] + 2, scl[1], scl[2] - 2); scene.add(SG);
+        var scl = cells[(Math.random() * cells.length) | 0], SG = new THREE.Group(); SG.position.set(scl[0] + 2, scl[1] - 0.06, scl[2] - 2); scene.add(SG);
         cyl(SG, 0.04, 0.05, 2.2, 0, 1.1, 0, 0x6b4a2e, 5); bx(SG, 1.6, 0.06, 0.06, 0, 1.6, 0, 0x6b4a2e); bx(SG, 0.55, 0.6, 0.25, 0, 1.45, 0, [0xc0392b, 0x2f7fd1, 0x9a8a5a][sc2 % 3]);
         var sh2 = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), M(0xe8d8a8)); sh2.position.y = 1.95; SG.add(sh2);
         var cp2 = new THREE.Mesh(new THREE.ConeGeometry(0.36, 0.2, 12), M(0xd8c08a)); cp2.position.y = 2.15; SG.add(cp2);
